@@ -16,8 +16,32 @@ const HomeList = () => {
     getPosts();
   }, [api.post]);
 
+  const handlePost = async () => {
+    const formData = new FormData();
+    formData.append("body", "hello");
+    formData.append("title", "title");
+    formData.append("userId", "1");
+    await api.post.createPost({
+      body: formData as any,
+    });
+  };
+
   return (
     <div>
+      <div className="flex items-center gap-3 mb-4">
+        <button
+          className="bg-white px-4 py-2 rounded-md text-black"
+          onClick={handlePost}
+        >
+          Post Data
+        </button>
+        <button className="bg-white px-4 py-2 rounded-md text-black">
+          Patch Data
+        </button>
+        <button className="bg-white px-4 py-2 rounded-md text-black">
+          Delete Data
+        </button>
+      </div>
       <ul>
         {posts.map((post, index) => {
           return (

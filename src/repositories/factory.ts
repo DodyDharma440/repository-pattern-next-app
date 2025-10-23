@@ -1,6 +1,4 @@
-import axios, { AxiosInstance, AxiosRequestConfig } from "axios";
-
-axios("");
+import { AxiosInstance, AxiosRequestConfig } from "axios";
 
 export type HttpMethod =
   | "POST"
@@ -30,8 +28,6 @@ class FetchFactory {
     url: string,
     options?: FactoryOptions<B>
   ) {
-    const authToken = "";
-
     const controller = new AbortController();
     this.controllers.get(url)?.abort();
     this.controllers.set(url, controller);
@@ -43,7 +39,6 @@ class FetchFactory {
       ...options?.options,
       headers: {
         ...options?.options?.headers,
-        ...(authToken ? { Authorization: `Bearer ${authToken}` } : {}),
         Accept: "application/json",
       },
     });

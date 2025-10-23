@@ -2,7 +2,27 @@ import axios from "axios";
 import { NextRequest } from "next/server";
 
 const requestHandler = async (req: NextRequest) => {
-  const { method, headers, body } = req;
+  const { method, headers } = req;
+  let body;
+  if (["POST", "PUT", "PATCH"].includes(method)) {
+    const contentType = headers.get("content-type") ?? "";
+
+    switch (contentType) {
+      case "application/json":
+        body = await req.json();
+        break;
+      case "multipart/form-data":
+        body = await req.formData();
+        break;
+      case "application/x-www-form-urlencoded":
+        const text = await req.text();
+        body = new URLSearchParams(text);
+        break;
+      default:
+        body = await req.text();
+        break;
+    }
+  }
 
   const url = new URL(req.url);
   const backendPath = url.pathname.replace("/api/placeholder", "");
@@ -39,7 +59,6 @@ const requestHandler = async (req: NextRequest) => {
       },
       data: body,
     });
-    console.log(axiosRes.config.headers);
 
     return Response.json(axiosRes.data, { status: axiosRes.status });
   } catch (error: any) {
