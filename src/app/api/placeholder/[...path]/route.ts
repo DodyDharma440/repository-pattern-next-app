@@ -26,7 +26,7 @@ const requestHandler = async (req: NextRequest) => {
 
   const url = new URL(req.url);
   const backendPath = url.pathname.replace("/api/placeholder", "");
-  const backendUrl = `https://jsonplaceholder.typicode.com/${backendPath}${url.search}`;
+  const backendUrl = `https://jsonplaceholder.typicode.com${backendPath}${url.search}`;
 
   const authToken = req.cookies.get("some-nextjs-token")?.value ?? "";
 

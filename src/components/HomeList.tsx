@@ -26,6 +26,27 @@ const HomeList = () => {
     });
   };
 
+  const handlePatch = async () => {
+    await api.post.updatePost({
+      body: {
+        body: "hello",
+        title: "patch",
+        userId: 1,
+      },
+      params: {
+        postId: 2,
+      },
+    });
+  };
+
+  const handleDelete = async () => {
+    await api.post.deletePost({
+      params: {
+        postId: 1,
+      },
+    });
+  };
+
   return (
     <div>
       <div className="flex items-center gap-3 mb-4">
@@ -35,10 +56,16 @@ const HomeList = () => {
         >
           Post Data
         </button>
-        <button className="bg-white px-4 py-2 rounded-md text-black">
+        <button
+          className="bg-white px-4 py-2 rounded-md text-black"
+          onClick={handlePatch}
+        >
           Patch Data
         </button>
-        <button className="bg-white px-4 py-2 rounded-md text-black">
+        <button
+          className="bg-white px-4 py-2 rounded-md text-black"
+          onClick={handleDelete}
+        >
           Delete Data
         </button>
       </div>

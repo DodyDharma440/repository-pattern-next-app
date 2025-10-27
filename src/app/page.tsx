@@ -1,28 +1,27 @@
 import HomeList from "@/components/HomeList";
-import { apiPlaceholder } from "@/configs/api";
 import PostRepository from "@/repositories/modules/post";
-import { IPost } from "@/types/modules/post";
-import { createSsrInstance } from "@/utils/axios";
-import { NextPage } from "next";
-import { cookies } from "next/headers";
+import { initServerRepo } from "@/utils/repository";
 
-interface HomeProps {
-  posts: IPost[];
-}
-
-const Home: NextPage<HomeProps> = async () => {
-  const cookieStore = await cookies();
-  const postsRepo = new PostRepository(
-    createSsrInstance(apiPlaceholder, cookieStore)
-  );
+const Home = async () => {
+  const postsRepo = await initServerRepo(PostRepository);
   const res = await postsRepo.getPosts();
   const posts = res.data ?? [];
+
+  const serverPost = async () => {
+    "use server";
+
+    const postsRepo = await initServerRepo(PostRepository);
+    await postsRepo.createPost({
+      body: { body: "abcd", title: "asdasd", userId: 1 },
+    });
+  };
 
   return (
     <div className="p-6">
       <div className="flex gap-6">
         <div>
           <h2 className="text-xl font-bold mb-4">Server Side Posts</h2>
+          <button onClick={serverPost}>Server Post</button>
           <ul>
             {posts.map((post, index) => {
               return (
