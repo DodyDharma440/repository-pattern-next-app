@@ -1,4 +1,4 @@
-# Repository Pattern for Next.js Pages Router
+# Repository Pattern for Next.js App Router
 
 ![Repository Pattern Structure](public/readme.png)
 
