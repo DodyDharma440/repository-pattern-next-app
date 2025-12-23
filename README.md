@@ -1,36 +1,90 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Repository Pattern for Next.js Pages Router
 
-## Getting Started
+![Repository Pattern Structure](public/readme.png)
 
-First, run the development server:
+## Directory Structure
+
+### 📁 - `configs`
+
+This directory contains global configuration files used across the application. Its main purpose is to centralize the setup of external libraries, environment-based settings, or system-wide options, making the codebase easier to maintain, test, and extend.
+
+#### Current Stucture
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+src/
+└── configs/
+    └── api.ts        ← Axios instance configuration for HTTP client
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+#### 📄 - File `api.ts`
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+This file exports a pre-configured Axios instance used for all HTTP requests to backend APIs. By using this shared instance, any part of the application such as repositories or services. Example usage:
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+```ts
+import apiInstance from '@/configs/api';
 
-## Learn More
+...
 
-To learn more about Next.js, take a look at the following resources:
+example: new ExampleRepository(apiInstance)
+```
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+### 📁 - `contexts`
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+This directory contains **React Contexts** used to manage global or shared state across components. It follows a modular structure where each context (e.g., `RepositoryContext`) is encapsulated in its own subfolder for better organization and scalability.
 
-## Deploy on Vercel
+#### Current Structure
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+```bash
+src/
+└── contexts/
+    └── RepositoryContext/
+        └── index.tsx   ← Main context provider + consumer + hook 
+    └── index.ts        ← Entry point folder 
+```
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+Example usage (`app/providers.tsx`):
+
+```ts
+"use client";
+
+import { RepositoryProvider } from "@/contexts";
+import React from "react";
+
+interface ProvidersProps {
+  children: React.ReactNode;
+}
+
+const Providers: React.FC<ProvidersProps> = ({ children }) => {
+  return <RepositoryProvider>{children}</RepositoryProvider>;
+};
+
+export default Providers;
+```
+
+Example consume (**client side only**):
+
+```ts
+const api = useRepositories()
+
+useEffect(() => {
+    const getData = async () => {
+        const res = await api.example.getAll()
+    }
+}, [])
+```
+
+### 📁 - `repositories`
+
+This directory contains all Repository Pattern implementations, abstracting data access logic away from components and services. Repositories act as a bridge between your application’s business logic and external data sources (like REST APIs or databases).
+
+#### Structure
+
+```bash
+src/
+└── repositories/
+    └── modules/
+        └── post.ts      ← Repository for Post-related operations
+    └── factory.ts       ← Factory function to create repository instances
+```
+
+Each file inside `modules/` represents a domain-specific repository like post.ts handles all CRUD operations related to posts. These repositories are typically instantiated via a factory (factory.ts).
